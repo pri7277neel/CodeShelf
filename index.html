@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeShelf</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ALERTA LOGIN -->
+  <div id="loginAlert"></div>
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="fade-in">
+    <div class="login-container">
+      <h1 class="logo">🧠 CodeShelf</h1>
+      <p class="description">
+        Organize e visualize melhor seus repositórios.<br>
+        CodeShelf é sua biblioteca pessoal de projetos GitHub, de forma limpa e intuitiva.
+      </p>
+
+      <div class="login-buttons">
+        <button id="loginGitBtn" type="button" class="github-btn">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub Logo" class="icon" />
+          Entrar com GitHub
+        </button>
+
+        <button id="loginSimBtn" type="button" class="github-btn">
+          Entrar (Simulação)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <main id="app" style="display: none;">
+    <header class="app-header">
+      <div class="header-left">
+        <h2>Bem-vindo ao CodeShelf 🚀</h2>
+      </div>
+      <div class="header-right">
+        <input type="text" id="username" placeholder="Digite usuário do GitHub">
+        <button id="loadBtn">Carregar Repositórios</button>
+        <button id="toggleThemeBtn">🌙</button>
+        <button id="compareBtn">Comparar</button>
+      </div>
+    </header>
+
+    <!-- USUÁRIO + ESTATÍSTICAS -->
+    <section class="user-section">
+      <div id="user-info" class="user-info"></div>
+      <div id="user-stats" class="user-stats" style="display:none;">
+        <h3>Estatísticas</h3>
+        <div id="langStats"></div>
+        <div id="topStarsStats"></div>
+      </div>
+    </section>
+
+    <!-- CONTROLES -->
+    <section class="controls">
+      <input type="text" id="searchRepo" placeholder="Buscar repositórios...">
+      <select id="sortFilter">
+        <option value="">Ordenar por</option>
+        <option value="updated">Última atualização</option>
+        <option value="stars">Stars</option>
+        <option value="forks">Forks</option>
+      </select>
+      <button id="showFavsBtn">Favoritos ★</button>
+      <button id="toggleStatsBtn">📊</button>
+    </section>
+
+    <section class="repos-container"></section>
+  </main>
+
+  <!-- MODAL COMPARAR -->
+  <div id="compareModal" class="modal">
+    <div class="modal-content">
+      <span id="closeCompare" class="close">&times;</span>
+      <h3>Comparar Usuários</h3>
+      <input type="text" id="compareUserA" placeholder="Usuário A">
+      <input type="text" id="compareUserB" placeholder="Usuário B">
+      <button id="doCompare">Comparar</button>
+      <div id="compareResult"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
