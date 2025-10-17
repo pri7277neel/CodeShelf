@@ -1,54 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CodeShelf</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeShelf</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Login -->
+    <section id="login-section" class="login-section">
+      <h1>CodeShelf</h1>
+      <p>Organize e explore seus repositórios do GitHub</p>
+      <button id="login-github" class="btn-login">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub">
+        Entrar com GitHub
+      </button>
+    </section>
 
-  <body>
-    <!-- Fundo animado -->
-    <div class="background"></div>
+    <!-- Área principal -->
+    <section id="main-section" class="main-section" style="display:none;">
+      <header class="header">
+        <div id="profile" class="profile"></div>
+        <button id="logout-btn" class="btn-logout">Sair</button>
+      </header>
 
-    <!-- Container principal -->
-    <div class="container">
-      <!-- Tela de login -->
-      <section id="login-section" class="active">
-        <h1 class="title">CodeShelf</h1>
-        <p class="subtitle">Organize, explore e personalize seus repositórios</p>
+      <div class="search-bar">
+        <input type="text" id="username" placeholder="Digite um usuário do GitHub">
+        <button id="search-btn">Buscar</button>
+      </div>
 
-        <button id="login-github" class="btn-login">
-          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" />
-          Entrar com GitHub
-        </button>
-      </section>
+      <div id="repos" class="repos"></div>
+    </section>
+  </div>
 
-      <!-- Tela de perfil -->
-      <section id="profile-section" class="hidden">
-        <div class="profile-header">
-          <img id="avatar" class="avatar" src="" alt="Avatar" />
-          <div>
-            <h2 id="username">@usuário</h2>
-            <p id="name">Nome do Usuário</p>
-          </div>
-          <button id="logout" class="btn-logout">Sair</button>
-        </div>
+  <footer>
+    <p>Feito por <a href="https://github.com/TheRenanOfc" target="_blank">TheRenanOfc</a></p>
+  </footer>
 
-        <div class="customization">
-          <label for="profile-image">Imagem de fundo do perfil:</label>
-          <input type="file" id="profile-image" accept="image/*" />
-        </div>
-
-        <div class="repo-search">
-          <input type="text" id="repoSearch" placeholder="Buscar repositórios..." />
-          <button id="searchRepos">Pesquisar</button>
-        </div>
-
-        <div id="repos" class="repo-list"></div>
-      </section>
-    </div>
-
-    <script src="script.js"></script>
-  </body>
+  <script src="script.js"></script>
+</body>
 </html>
