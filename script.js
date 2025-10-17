@@ -1,126 +1,96 @@
-// Variáveis globais
-let token = null;
-let user = null;
+document.addEventListener("DOMContentLoaded", () => {
+  const loginSection = document.getElementById("login-section");
+  const profileSection = document.getElementById("profile-section");
+  const loginButton = document.getElementById("login-github");
+  const logoutButton = document.getElementById("logout");
+  const searchButton = document.getElementById("searchRepos");
+  const repoSearch = document.getElementById("repoSearch");
+  const reposContainer = document.getElementById("repos");
+  const avatarImg = document.getElementById("avatar");
+  const nameEl = document.getElementById("name");
+  const usernameEl = document.getElementById("username");
 
-// Elementos DOM
-const loginScreen = document.getElementById('login-screen');
-const app = document.getElementById('app');
-const loginBtn = document.getElementById('login-github');
-const logoutBtn = document.getElementById('logout');
-const userInfoDiv = document.getElementById('user-info');
-const reposContainer = document.getElementById('repos-container');
-const searchInput = document.getElementById('search-input');
-const searchBtn = document.getElementById('search-btn');
+  // Função para exibir a tela correta
+  function showSection(section) {
+    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+    section.classList.add("active");
+  }
 
-// ----------------------
-// Funções de sessão
-// ----------------------
-function getTokenFromHash() {
+  // Verifica se o token está no hash da URL
   const hash = window.location.hash;
-  if (hash.startsWith('#token=')) {
-    token = hash.replace('#token=', '');
-    window.history.replaceState({}, document.title, window.location.pathname);
+  if (hash && hash.includes("token=")) {
+    const token = hash.split("token=")[1];
+    localStorage.setItem("token", token);
+    window.location.hash = "";
   }
-}
 
-async function getSession() {
-  if (!token) getTokenFromHash();
-  if (!token) return;
+  const token = localStorage.getItem("token");
 
-  // Decodifica token
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    user = payload;
-    showApp();
-    loadRepos(user.login);
-  } catch (err) {
-    console.error('Token inválido', err);
-    logout();
-  }
-}
+  if (token) {
+    // Usuário logado → mostra perfil
+    showSection(profileSection);
 
-// ----------------------
-// Funções de UI
-// ----------------------
-function showApp() {
-  loginScreen.style.display = 'none';
-  app.style.display = 'block';
-  userInfoDiv.innerHTML = `
-    <img src="${user.avatar_url}" alt="${user.name}" class="avatar" /> 
-    ${user.name}
-  `;
-}
-
-function showLogin() {
-  loginScreen.style.display = 'flex';
-  app.style.display = 'none';
-}
-
-// ----------------------
-// Login / Logout
-// ----------------------
-loginBtn.addEventListener('click', () => {
-  window.location.href = '/api/auth/github';
-});
-
-logoutBtn.addEventListener('click', () => {
-  logout();
-});
-
-function logout() {
-  token = null;
-  user = null;
-  showLogin();
-}
-
-// ----------------------
-// Repositórios
-// ----------------------
-async function loadRepos(username) {
-  if (!token) return;
-  reposContainer.innerHTML = 'Carregando...';
-
-  try {
-    const res = await fetch(`/api/getRepos?username=${username}`, {
+    fetch("/api/profile/get", {
       headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error('Não foi possível carregar repositórios');
-    const repos = await res.json();
-
-    if (!repos || repos.length === 0) {
-      reposContainer.innerHTML = 'Nenhum repositório encontrado.';
-      return;
-    }
-
-    reposContainer.innerHTML = '';
-    repos.forEach(r => {
-      const div = document.createElement('div');
-      div.className = 'repo';
-      div.innerHTML = `
-        <h3>${r.name}</h3>
-        <p>${r.description || ''}</p>
-        <a href="${r.html_url}" target="_blank">Ver no GitHub</a>
-      `;
-      reposContainer.appendChild(div);
-    });
-  } catch (err) {
-    console.error(err);
-    reposContainer.innerHTML = 'Erro ao carregar repositórios.';
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.name) {
+          nameEl.textContent = data.name;
+          usernameEl.textContent = data.login ? `@${data.login}` : "";
+          avatarImg.src = data.avatar_url;
+        }
+      })
+      .catch(err => console.error("Erro ao carregar perfil:", err));
+  } else {
+    // Usuário não logado → mostra login
+    showSection(loginSection);
   }
-}
 
-// ----------------------
-// Pesquisa
-// ----------------------
-searchBtn.addEventListener('click', () => {
-  const username = searchInput.value.trim();
-  if (!username) return alert('Digite um usuário');
-  loadRepos(username);
-});
+  // Login com GitHub
+  if (loginButton) {
+    loginButton.addEventListener("click", () => {
+      window.location.href = "/api/auth/github";
+    });
+  }
 
-// ----------------------
-// Inicialização
-// ----------------------
-window.addEventListener('DOMContentLoaded', () => {
-  getSession();
+  // Logout
+  if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      showSection(loginSection);
+    });
+  }
+
+  // Pesquisa de repositórios
+  if (searchButton) {
+    searchButton.addEventListener("click", async () => {
+      const username = repoSearch.value.trim();
+      if (!username) return alert("Digite um nome de usuário!");
+
+      try {
+        const res = await fetch(`/api/getRepos?username=${username}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        });
+
+        if (!res.ok) throw new Error("Erro ao buscar repositórios");
+        const data = await res.json();
+
+        reposContainer.innerHTML = "";
+        data.forEach(repo => {
+          const div = document.createElement("div");
+          div.classList.add("repo-card");
+          div.innerHTML = `
+            <h3>${repo.name}</h3>
+            <p>${repo.description || "Sem descrição"}</p>
+            <a href="${repo.html_url}" target="_blank">Ver no GitHub</a>
+          `;
+          reposContainer.appendChild(div);
+        });
+      } catch (error) {
+        console.error(error);
+        alert("Erro: não foi possível carregar repositórios. Token pode estar inválido.");
+      }
+    });
+  }
 });
