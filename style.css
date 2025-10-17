@@ -2,54 +2,74 @@ body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  background: #f4f4f9;
+  background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-#loginScreen, #appScreen {
-  text-align: center;
+.screen {
+  width: 100%;
+  max-width: 500px;
+}
+
+.login-box, .app-box {
   background: #fff;
+  border-radius: 15px;
   padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.login-box h1 {
+  margin: 0 0 1rem 0;
 }
 
 button {
-  padding: 0.6rem 1.2rem;
+  padding: 0.7rem 1.5rem;
   margin-top: 1rem;
   border: none;
-  border-radius: 6px;
-  background: #24292e;
+  border-radius: 8px;
+  background-color: #24292e;
   color: #fff;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: 0.3s;
 }
 
 button:hover {
-  background: #444c56;
+  background-color: #444c56;
 }
 
 input {
   padding: 0.5rem;
-  width: 200px;
-  margin-right: 0.5rem;
-  border: 1px solid #ccc;
   border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 60%;
+  margin-right: 0.5rem;
 }
 
 ul {
   list-style: none;
   padding: 0;
   margin-top: 1rem;
-  text-align: left;
 }
 
 li {
+  background: #f4f4f9;
   margin-bottom: 1rem;
-  padding: 0.5rem;
-  background: #f0f0f5;
-  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+li:hover {
+  background: #e0e0f0;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
 }
