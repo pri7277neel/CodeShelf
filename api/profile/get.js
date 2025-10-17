@@ -1,23 +1,28 @@
-// api/profile/get.js
-import { createClient } from '@vercel/postgres';
+import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
-  const { owner } = req.query;
-  if (!owner) return res.status(400).json({ error: 'owner obrigatório' });
-
   try {
-    const client = createClient();
-    await client.connect();
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
 
-    const { rows } = await client.query(
-      `SELECT data FROM profiles WHERE owner = $1`,
-      [owner]
-    );
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    await client.end();
-    if (rows.length === 0) return res.status(404).json({ error: 'Perfil não encontrado' });
-    res.json(rows[0].data);
+    if (!decoded) {
+      return res.status(401).json({ error: "Token inválido" });
+    }
+
+    // Retorna dados básicos do usuário
+    res.status(200).json({
+      login: decoded.login,
+      id: decoded.id,
+      name: decoded.name,
+      avatar_url: decoded.avatar_url
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Erro no /api/profile/get:", err);
+    res.status(500).json({ error: "Erro interno no servidor" });
   }
 }
