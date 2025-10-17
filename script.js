@@ -1,47 +1,46 @@
-// Login simples (pode conectar com /api/auth/github)
 const loginBtn = document.getElementById('loginBtn');
 const loginScreen = document.getElementById('loginScreen');
 const appScreen = document.getElementById('appScreen');
 
 loginBtn.addEventListener('click', () => {
-  // Aqui você redireciona para a rota de autenticação
   window.location.href = '/api/auth/github';
 });
 
-// Função para buscar repositórios
-async function buscarRepos() {
-  const usernameInput = document.getElementById('username');
-  const username = usernameInput.value.trim();
-  const lista = document.getElementById('repoList');
+const searchBtn = document.getElementById('searchBtn');
+const usernameInput = document.getElementById('username');
+const repoList = document.getElementById('repoList');
 
-  lista.innerHTML = '';
+searchBtn.addEventListener('click', async () => {
+  const username = usernameInput.value.trim();
+  repoList.innerHTML = '';
 
   if (!username) return;
 
   try {
     const res = await fetch(`/api/getRepos?username=${username}`);
-    const repos = await res.json();
+    const data = await res.json();
 
-    if (!Array.isArray(repos)) {
-      lista.innerHTML = '<li>Erro: resposta inesperada da API.</li>';
+    if (!Array.isArray(data)) {
+      repoList.innerHTML = '<li>Erro: resposta inesperada da API.</li>';
       return;
     }
 
-    if (repos.length === 0) {
-      lista.innerHTML = '<li>Nenhum repositório encontrado.</li>';
+    if (data.length === 0) {
+      repoList.innerHTML = '<li>Nenhum repositório encontrado.</li>';
       return;
     }
 
-    repos.forEach(repo => {
+    data.forEach(repo => {
       const li = document.createElement('li');
-      li.innerHTML = `<a href="${repo.url}" target="_blank">${repo.name}</a> - ${repo.language || 'Sem linguagem'}<br>${repo.description || ''}`;
-      lista.appendChild(li);
+      li.innerHTML = `
+        <a href="${repo.url}" target="_blank">${repo.name}</a>
+        <p>${repo.description || ''}</p>
+        <small>${repo.language || 'Sem linguagem'}</small>
+      `;
+      repoList.appendChild(li);
     });
-
   } catch (err) {
     console.error(err);
-    lista.innerHTML = '<li>Erro ao carregar repositórios.</li>';
+    repoList.innerHTML = '<li>Erro ao carregar repositórios.</li>';
   }
-}
-
-document.getElementById('searchBtn').addEventListener('click', buscarRepos);
+});
