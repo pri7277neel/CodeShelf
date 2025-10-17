@@ -25,7 +25,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Resposta inesperada da API.' });
     }
 
-    // Formata os dados que você quer mostrar no frontend
     const repos = data.map(repo => ({
       name: repo.name,
       url: repo.html_url,
