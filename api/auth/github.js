@@ -1,10 +1,9 @@
 // api/auth/github.js
-import { json } from '@vercel/node';
-
 export default function handler(req, res) {
   try {
     const client_id = process.env.GITHUB_CLIENT_ID;
-    const baseUrl = process.env.BASE_URL; // domínio principal do seu site
+    const baseUrl = process.env.BASE_URL;
+
     if (!client_id || !baseUrl) {
       return res.status(500).json({ error: 'Client ID ou BASE_URL não configurado' });
     }
@@ -16,7 +15,7 @@ export default function handler(req, res) {
       redirect_uri
     )}&scope=${encodeURIComponent(scope)}`;
 
-    // redireciona o usuário pro GitHub
+    // redireciona pro GitHub
     res.writeHead(302, { Location: githubAuthUrl });
     res.end();
   } catch (err) {
