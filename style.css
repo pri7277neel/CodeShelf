@@ -7,9 +7,10 @@
 }
 
 body {
-  background: #0d1117;
+  background: linear-gradient(135deg, #0d1117, #161b22);
   color: #e6edf3;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
+  overflow-x: hidden;
 }
 
 /* ==================== LOGIN ==================== */
@@ -19,21 +20,32 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+#login-screen h1 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #58a6ff;
+  animation: slideDown 0.8s ease forwards;
 }
 
 #loginBtn {
-  padding: 10px 20px;
+  padding: 12px 25px;
   font-size: 1rem;
   border: none;
   cursor: pointer;
-  background-color: #238636;
+  background: linear-gradient(90deg, #238636, #2ea043);
   color: #fff;
-  border-radius: 5px;
-  transition: 0.3s;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.3s;
+  animation: slideUp 0.8s ease forwards;
 }
 
 #loginBtn:hover {
-  background-color: #2ea043;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
 }
 
 /* ==================== HEADER ==================== */
@@ -41,15 +53,24 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 15px 25px;
+  background: #161b22;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 #themeBtn {
-  padding: 5px 10px;
+  padding: 5px 12px;
   font-size: 1.2rem;
   cursor: pointer;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  background: linear-gradient(90deg,#238636,#2ea043);
+  color: #fff;
+  transition: all 0.3s;
+}
+
+#themeBtn:hover {
+  transform: scale(1.1);
 }
 
 /* ==================== FILTERS ==================== */
@@ -57,13 +78,18 @@ header {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 10px 20px;
+  padding: 15px 25px;
+  background: #0d1117aa;
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #30363d;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 #filters input, #filters select, #filters button {
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 8px 12px;
+  border-radius: 8px;
   border: none;
+  outline: none;
 }
 
 #filters input, #filters select {
@@ -72,34 +98,37 @@ header {
 }
 
 #filters button {
-  background-color: #238636;
+  background: linear-gradient(90deg,#238636,#2ea043);
   color: #fff;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s;
 }
 
 #filters button:hover {
-  background-color: #2ea043;
+  transform: scale(1.05);
 }
 
 /* ==================== CARDS ==================== */
 #cardsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 25px;
 }
 
 .card {
-  background-color: #161b22;
+  background: linear-gradient(135deg, #161b22, #21262d);
   padding: 15px;
-  border-radius: 8px;
-  transition: 0.3s;
+  border-radius: 12px;
+  transition: all 0.3s ease;
   cursor: pointer;
+  animation: fadeIn 0.6s ease forwards;
+  position: relative;
 }
 
 .card:hover {
-  background-color: #21262d;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.4);
 }
 
 .card h3 {
@@ -107,25 +136,52 @@ header {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  font-size: 1.1rem;
 }
 
 .card .fav {
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  color: gold;
+  transition: transform 0.2s;
+}
+
+.card .fav:hover {
+  transform: scale(1.2);
 }
 
 .card p {
-  font-size: 0.9rem;
-  margin-bottom: 5px;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
 }
 
 .card small {
   color: #8b949e;
 }
 
+/* ==================== ANIMAÇÕES ==================== */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-20px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+
 /* ==================== RESPONSIVO ==================== */
-@media(max-width: 600px){
+@media(max-width: 700px){
   #filters {
     flex-direction: column;
+  }
+  
+  #cardsContainer {
+    grid-template-columns: 1fr;
   }
 }
