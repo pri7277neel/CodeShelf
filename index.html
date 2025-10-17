@@ -7,17 +7,23 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="loginScreen">
-    <h1>Bem-vindo ao CodeShelf</h1>
-    <button id="loginBtn">Entrar com GitHub</button>
+  <div id="loginScreen" class="screen">
+    <div class="login-box">
+      <h1>CodeShelf</h1>
+      <p>Entre com sua conta GitHub para acessar seus repositórios</p>
+      <button id="loginBtn">Entrar com GitHub</button>
+    </div>
   </div>
 
-  <div id="appScreen" style="display:none;">
-    <h2>Pesquisar Repositórios</h2>
-    <input type="text" id="username" placeholder="Nome do usuário GitHub">
-    <button id="searchBtn">Buscar</button>
-
-    <ul id="repoList"></ul>
+  <div id="appScreen" class="screen" style="display:none;">
+    <div class="app-box">
+      <header>
+        <h2>Seus Repositórios</h2>
+        <input type="text" id="username" placeholder="Digite o usuário do GitHub">
+        <button id="searchBtn">Buscar</button>
+      </header>
+      <ul id="repoList"></ul>
+    </div>
   </div>
 
   <script src="script.js"></script>
