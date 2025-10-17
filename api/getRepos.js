@@ -3,38 +3,22 @@ import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  // só aceita GET
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Método não permitido' });
-  }
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
 
   try {
-    // pega token do header Authorization: Bearer <token>
     const authHeader = req.headers.authorization || '';
     const token = authHeader.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ error: 'Token não fornecido' });
-    }
+    if (!token) return res.status(401).json({ error: 'Token não fornecido' });
 
-    // valida JWT
     let payload;
-    try {
-      payload = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      return res.status(401).json({ error: 'Token inválido ou expirado' });
-    }
+    try { payload = jwt.verify(token, process.env.JWT_SECRET); }
+    catch(err) { return res.status(401).json({ error: 'Token inválido ou expirado' }); }
 
     const username = req.query.username;
-    if (!username) {
-      return res.status(400).json({ error: 'Username é obrigatório' });
-    }
+    if (!username) return res.status(400).json({ error: 'Username é obrigatório' });
 
-    // chama GitHub API
     const githubRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`, {
-      headers: {
-        'Authorization': `token ${payload.access_token}`, // usa o token OAuth
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers: { Authorization: `token ${payload.access_token}`, Accept: 'application/vnd.github.v3+json' }
     });
 
     if (!githubRes.ok) {
@@ -43,12 +27,10 @@ export default async function handler(req, res) {
     }
 
     const repos = await githubRes.json();
-
-    // retorna os repositórios
     return res.status(200).json(repos);
 
-  } catch (err) {
+  } catch(err) {
     console.error('Erro em getRepos:', err);
-    return res.status(500).json({ error: 'Erro interno no servidor' });
+    res.status(500).json({ error: 'Erro interno no servidor' });
   }
 }
