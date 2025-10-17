@@ -1,34 +1,25 @@
-// api/saveRepo.js
-import { createClient } from '@vercel/postgres';
-import { getSession } from '../helpers/getSession.js';
+// /api/saveRepo.js
+import jwt from 'jsonwebtoken';
 
-export default async function handler(req, res) {
-  const session = getSession(req);
-  if (!session) return res.status(401).json({ error: 'Não autenticado' });
+let repoData = {}; // simples storage temporário; no futuro pode usar DB
 
-  const { repo, image } = req.body;
-  if (!repo || !image) return res.status(400).json({ error: 'Dados inválidos' });
+export default function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
-  const client = createClient();
-  await client.connect();
+  try {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace('Bearer ', '');
+    if (!token) return res.status(401).json({ error: 'Token não fornecido' });
 
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS repo_images (
-      owner TEXT,
-      repo TEXT,
-      image TEXT,
-      PRIMARY KEY (owner, repo)
-    )
-  `);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const { fullName, imageUrl } = req.body;
 
-  await client.query(
-    `INSERT INTO repo_images (owner, repo, image)
-     VALUES ($1, $2, $3)
-     ON CONFLICT (owner, repo)
-     DO UPDATE SET image = EXCLUDED.image;`,
-    [session.login, repo, image]
-  );
+    if (!fullName) return res.status(400).json({ error: 'Repositório não fornecido' });
 
-  await client.end();
-  res.json({ ok: true });
+    repoData[fullName] = { owner: payload.login, imageUrl };
+    res.status(200).json({ success: true });
+
+  } catch(err) {
+    res.status(500).json({ error: 'Erro interno' });
+  }
 }
