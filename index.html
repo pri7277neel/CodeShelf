@@ -1,35 +1,43 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeShelf</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CodeShelf — Steam Edition</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- ==================== LOGIN ==================== -->
-  <div id="login-screen" class="screen">
-    <h1>Bem-vindo ao CodeShelf</h1>
-    <button id="loginBtn">Entrar com GitHub</button>
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <h1>🎮 CodeShelf</h1>
+      <p>Gerencie seus repositórios com estilo.</p>
+      <button id="loginBtn" class="btn-primary">Entrar com GitHub</button>
+    </div>
   </div>
 
-  <!-- ==================== APP ==================== -->
-  <div id="app" class="screen" style="display:none;">
-    <header>
-      <div id="user-info"></div>
-      <button id="themeBtn">🌙</button>
+  <!-- APP -->
+  <main id="app" style="display:none;">
+    <header class="topbar">
+      <div class="left">
+        <div class="profile" id="user-info"></div>
+      </div>
+
+      <div class="center filters">
+        <input id="searchInput" placeholder="Pesquisar repositório..." />
+        <select id="langSelect"><option value="">Todas linguagens</option></select>
+        <button id="favFilterBtn" class="btn-ghost">Favoritos ★</button>
+      </div>
+
+      <div class="right controls">
+        <input id="username" placeholder="Usuário GitHub" />
+        <button id="loadBtn" class="btn-primary">Carregar</button>
+        <button id="themeBtn" class="btn-ghost">🌙</button>
+      </div>
     </header>
 
-    <section id="filters">
-      <input type="text" id="searchInput" placeholder="Pesquisar repositórios">
-      <select id="langSelect"></select>
-      <button id="favFilterBtn">⭐ Favoritos</button>
-      <input type="text" id="username" placeholder="Pesquisar outro usuário">
-      <button id="loadBtn">Carregar</button>
-    </section>
-
-    <main id="cardsContainer"></main>
-  </div>
+    <section class="cards-container" id="cardsContainer"></section>
+  </main>
 
   <script src="script.js"></script>
 </body>
