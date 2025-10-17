@@ -1,20 +1,31 @@
-import { getSession } from '../helpers/getSession.js';
+import fetch from 'node-fetch';
+import { getSession } from '../../helpers/getSession';
 
 export default async function handler(req, res) {
-  const session = getSession(req);
-  if (!session) return res.status(401).json({ error: 'Token inválido ou ausente' });
+    const { username } = req.query;
+    const session = await getSession(req);
 
-  const username = req.query.username;
-  if (!username) return res.status(400).json({ error: 'Username não fornecido' });
+    if (!session || !session.token) {
+        return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
 
-  try {
-    const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`, {
-      headers: { Authorization: `Bearer ${session.githubToken}` },
-    });
-    const repos = await reposRes.json();
-    res.status(200).json(repos);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Não foi possível carregar repositórios' });
-  }
+    try {
+        const response = await fetch(`https://api.github.com/users/${username}/repos`, {
+            headers: {
+                Authorization: `token ${session.token}`,
+                'User-Agent': 'CodeShelf-App'
+            }
+        });
+
+        if (!response.ok) {
+            const msg = await response.text();
+            return res.status(response.status).json({ error: msg });
+        }
+
+        const repos = await response.json();
+        res.status(200).json(Array.isArray(repos) ? repos : []);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao buscar repositórios' });
+    }
 }
