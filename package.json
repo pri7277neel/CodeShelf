@@ -1,15 +1,18 @@
 {
   "name": "codeshelf",
   "version": "1.0.0",
+  "description": "Gerenciador de repositórios com login GitHub e imagens personalizadas",
+  "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "vercel dev",
     "build": "echo 'No build step needed for static + serverless functions'"
-  },
-  "dependencies": {
-    "jsonwebtoken": "^9.0.0",
-    "node-fetch": "^3.3.1"
   },
   "engines": {
     "node": "22.x"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.0",
+    "node-fetch": "^3.4.0"
   }
 }
