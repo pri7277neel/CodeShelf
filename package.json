@@ -19,7 +19,8 @@
     "dotenv": "^16.3.1",
     "sqlite3": "^5.1.6"
   },
-  "engines": {
-    "node": "18.x"
-  }
+ "engines": {
+  "node": "22.x"
 }
+}
+
