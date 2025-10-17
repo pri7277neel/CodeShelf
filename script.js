@@ -1,34 +1,141 @@
+// ==================== ELEMENTOS ====================
 const loginBtn = document.getElementById('loginBtn');
 const loginScreen = document.getElementById('login-screen');
 const app = document.getElementById('app');
-const loadBtn = document.getElementById('loadBtn');
 const usernameInput = document.getElementById('username');
+const loadBtn = document.getElementById('loadBtn');
+const searchInput = document.getElementById('searchInput');
+const langSelect = document.getElementById('langSelect');
+const favFilterBtn = document.getElementById('favFilterBtn');
 const themeBtn = document.getElementById('themeBtn');
 const cardsContainer = document.getElementById('cardsContainer');
 const userInfo = document.getElementById('user-info');
 
-const searchInput = document.getElementById('searchInput');
-const langSelect = document.getElementById('langSelect');
-const favFilterBtn = document.getElementById('favFilterBtn');
-
 let darkMode = true;
-let favorites = JSON.parse(localStorage.getItem('cs_favorites')) || [];
-let repoImages = JSON.parse(localStorage.getItem('cs_repoImages')) || {};
-let currentRepos = [];
-let activeFilters = { favoritesOnly: false, language: '', query: '' };
+let repositories = [];
+let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
-// util
-function safeId(str){ return 'id_' + String(str).replace(/[^a-z0-9]/gi, '_'); }
-function escapeHtml(s){ if(!s)return ''; return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function cssEscape(str){ return str.replace(/["\\]/g,'\\$&'); }
-
-// LOGIN
+// ==================== LOGIN ====================
 loginBtn.addEventListener('click', () => {
-  const base = window.location.origin;
-  window.location.href = `${base}/api/auth/github`;
+  window.location.href = '/api/auth/github';
 });
 
-// THEME
+// Verifica se o token JWT está no hash da URL
+function checkJWT() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#token=')) {
+    const token = hash.split('=')[1];
+    localStorage.setItem('jwt', token);
+    window.location.hash = '';
+    loadUserProfile();
+    loginScreen.style.display = 'none';
+    app.style.display = 'block';
+  } else if (localStorage.getItem('jwt')) {
+    loadUserProfile();
+    loginScreen.style.display = 'none';
+    app.style.display = 'block';
+  }
+}
+
+// ==================== CARREGAR PERFIL ====================
+async function loadUserProfile() {
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) return;
+  try {
+    const res = await fetch('/api/getSession', {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    const data = await res.json();
+    if (!data.login) throw new Error('Não autenticado');
+    userInfo.textContent = `Olá, ${data.name || data.login}`;
+    usernameInput.value = data.login;
+    loadRepos(data.login);
+  } catch (err) {
+    console.error('Erro ao carregar perfil:', err);
+    cardsContainer.innerHTML = `<p style="color:red;">Erro ao carregar perfil. Faça login novamente.</p>`;
+  }
+}
+
+// ==================== CARREGAR REPOS ====================
+async function loadRepos(user) {
+  const jwt = localStorage.getItem('jwt');
+  try {
+    const res = await fetch(`/api/getRepos?username=${user}`, {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    if (!res.ok) throw new Error('Token inválido ou API falhou');
+    repositories = await res.json();
+    populateLangFilter();
+    renderCards();
+  } catch (err) {
+    console.error('Não foi possível carregar repositórios:', err);
+    cardsContainer.innerHTML = `<p style="color:red;">Erro ao carregar repositórios. Tente logar novamente.</p>`;
+  }
+}
+
+// ==================== RENDER CARDS ====================
+function renderCards() {
+  const search = searchInput.value.toLowerCase();
+  const langFilter = langSelect.value;
+  const filtered = repositories.filter(r => {
+    const matchesSearch = r.name.toLowerCase().includes(search);
+    const matchesLang = langFilter ? r.language === langFilter : true;
+    return matchesSearch && matchesLang;
+  });
+
+  cardsContainer.innerHTML = filtered.length
+    ? filtered
+        .map(r => {
+          const fav = favorites.includes(r.id) ? '★' : '☆';
+          return `
+            <div class="card">
+              <h3>${r.name} <span class="fav" data-id="${r.id}">${fav}</span></h3>
+              <p>${r.description || ''}</p>
+              <small>${r.language || ''}</small>
+            </div>
+          `;
+        })
+        .join('')
+    : '<p>Nenhum repositório encontrado.</p>';
+
+  // Favoritar
+  document.querySelectorAll('.fav').forEach(el => {
+    el.addEventListener('click', e => {
+      const id = parseInt(e.target.dataset.id);
+      if (favorites.includes(id)) {
+        favorites = favorites.filter(f => f !== id);
+      } else {
+        favorites.push(id);
+      }
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      renderCards();
+    });
+  });
+}
+
+// ==================== FILTROS ====================
+searchInput.addEventListener('input', renderCards);
+langSelect.addEventListener('change', renderCards);
+favFilterBtn.addEventListener('click', () => {
+  repositories = repositories.map(r => r.favorite = favorites.includes(r.id));
+  repositories.sort((a,b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0));
+  renderCards();
+});
+
+// Preenche dropdown de linguagens
+function populateLangFilter() {
+  const langs = [...new Set(repositories.map(r => r.language).filter(Boolean))];
+  langSelect.innerHTML = `<option value="">Todas linguagens</option>` +
+    langs.map(l => `<option value="${l}">${l}</option>`).join('');
+}
+
+// ==================== BOTÃO CARREGAR USER ====================
+loadBtn.addEventListener('click', () => {
+  const user = usernameInput.value.trim();
+  if (user) loadRepos(user);
+});
+
+// ==================== THEME ====================
 themeBtn.addEventListener('click', () => {
   darkMode = !darkMode;
   document.body.style.background = darkMode ? '#0d1117' : '#fafafa';
@@ -36,132 +143,5 @@ themeBtn.addEventListener('click', () => {
   themeBtn.textContent = darkMode ? '🌙' : '☀️';
 });
 
-// FILTER UI
-favFilterBtn.addEventListener('click', () => {
-  activeFilters.favoritesOnly = !activeFilters.favoritesOnly;
-  favFilterBtn.classList.toggle('active', activeFilters.favoritesOnly);
-  renderCards(currentRepos);
-});
-
-searchInput.addEventListener('input', e => {
-  activeFilters.query = e.target.value.toLowerCase();
-  renderCards(currentRepos);
-});
-
-langSelect.addEventListener('change', e => {
-  activeFilters.language = e.target.value;
-  renderCards(currentRepos);
-});
-
-// LOAD REPOS
-loadBtn.addEventListener('click', async () => {
-  const username = usernameInput.value.trim();
-  if(!username) return alert('Informe um usuário do GitHub!');
-  await fetchRepos(username);
-});
-
-async function fetchRepos(username){
-  try{
-    const token = window.location.hash.split('token=')[1];
-    if(!token) return alert('Você precisa logar primeiro!');
-    const res = await fetch(`/api/getRepos?username=${encodeURIComponent(username)}&token=${token}`);
-    if(!res.ok) throw new Error('Não foi possível carregar repositórios. Token pode estar inválido.');
-    const data = await res.json();
-    currentRepos = data;
-    populateLangSelect(data);
-    renderCards(data);
-  }catch(e){
-    alert(e.message);
-    console.error(e);
-  }
-}
-
-function populateLangSelect(repos){
-  const langs = [...new Set(repos.map(r=>r.language).filter(Boolean))];
-  langSelect.innerHTML = `<option value="">Todas linguagens</option>`;
-  langs.forEach(l=>langSelect.insertAdjacentHTML('beforeend',`<option value="${l}">${l}</option>`));
-}
-
-// CARDS
-function renderCards(repos){
-  cardsContainer.innerHTML='';
-  repos.forEach(r=>{
-    if(activeFilters.favoritesOnly && !favorites.includes(r.full_name)) return;
-    if(activeFilters.language && r.language!==activeFilters.language) return;
-    if(activeFilters.query && !r.name.toLowerCase().includes(activeFilters.query)) return;
-
-    const fav = favorites.includes(r.full_name) ? '★' : '☆';
-    const html = `
-      <div class="repo-card" data-fullname="${r.full_name}">
-        <img src="${r.image||'https://via.placeholder.com/300x140?text=Repo'}" />
-        <button class="fav-btn">${fav}</button>
-        <div class="repo-name">${escapeHtml(r.name)}</div>
-        <div class="repo-meta">
-          <span>${r.language||'--'}</span>
-          <span>★ ${r.stargazers_count}</span>
-        </div>
-      </div>
-    `;
-    const el = document.createElement('div');
-    el.innerHTML = html;
-    const card = el.firstElementChild;
-
-    // FAVORITE
-    card.querySelector('.fav-btn').addEventListener('click', e=>{
-      e.stopPropagation();
-      toggleFavorite(r.full_name, e.target);
-    });
-
-    // MODAL (imagem)
-    card.addEventListener('click', ()=>{
-      showModal(r);
-    });
-
-    cardsContainer.appendChild(card);
-  });
-}
-
-// FAVORITE
-function toggleFavorite(fullName, btn){
-  const idx = favorites.indexOf(fullName);
-  if(idx>-1){favorites.splice(idx,1); btn.textContent='☆';}
-  else{favorites.push(fullName); btn.textContent='★';}
-  localStorage.setItem('cs_favorites', JSON.stringify(favorites));
-}
-
-// MODAL
-function showModal(repo){
-  const modal = document.createElement('div');
-  modal.className='repo-modal';
-  modal.innerHTML=`
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>${escapeHtml(repo.name)}</h2>
-        <button class="btn-ghost close-btn">✖</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-left">
-          <p>${escapeHtml(repo.description||'Sem descrição')}</p>
-          <p><a href="${repo.html_url}" target="_blank">Abrir no GitHub</a></p>
-        </div>
-        <div class="modal-right">
-          <img class="preview-img" src="${repo.image||'https://via.placeholder.com/320x220?text=Repo'}" />
-        </div>
-      </div>
-    </div>
-  `;
-  modal.querySelector('.close-btn').addEventListener('click',()=>modal.remove());
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
-  document.body.appendChild(modal);
-}
-
-// INICIALIZA
-document.addEventListener('DOMContentLoaded',()=>{
-  const token = window.location.hash.split('token=')[1];
-  if(token){
-    loginScreen.style.display='none';
-    app.style.display='block';
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    userInfo.innerHTML=`<img src="${payload.avatar_url}" /><div><h3>${payload.login}</h3><p>${payload.name||''}</p></div>`;
-  }
-});
+// ==================== INICIALIZAÇÃO ====================
+checkJWT();
