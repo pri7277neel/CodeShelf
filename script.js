@@ -11,8 +11,20 @@ const searchBtn = document.getElementById('search-btn');
 const reposContainer = document.getElementById('repos');
 const errorEl = document.getElementById('error');
 
-// Token JWT armazenado localmente
-let token = localStorage.getItem('jwt');
+// Função para extrair token do hash da URL
+function getTokenFromHash() {
+    if (window.location.hash.startsWith('#token=')) {
+        const t = window.location.hash.split('=')[1];
+        // Limpa o hash da URL
+        window.history.replaceState(null, null, window.location.pathname);
+        return t;
+    }
+    return null;
+}
+
+// Armazena o token no localStorage
+let token = getTokenFromHash() || localStorage.getItem('jwt');
+if (getTokenFromHash()) localStorage.setItem('jwt', token);
 
 // Função para atualizar UI após login
 function updateUILoggedIn(user) {
@@ -33,10 +45,13 @@ function updateUILoggedOut() {
     searchContainer.style.display = 'none';
     reposContainer.style.display = 'none';
     errorEl.style.display = 'none';
+    localStorage.removeItem('jwt');
 }
 
 // Função para obter perfil via API
 async function getProfile() {
+    if (!token) return updateUILoggedOut();
+
     try {
         const res = await fetch('/api/profile/get', {
             headers: { Authorization: `Bearer ${token}` }
@@ -86,8 +101,6 @@ loginBtn.addEventListener('click', () => {
 });
 
 logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('jwt');
-    token = null;
     updateUILoggedOut();
 });
 
