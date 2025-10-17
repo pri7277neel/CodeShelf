@@ -1,48 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CodeShelf</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="container">
-    <div id="login-section" class="card active fade-in">
-      <h1 class="logo">CodeShelf</h1>
-      <p class="subtitle">Guarde e gerencie seus repositórios favoritos.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeShelf</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-      <button id="login-github" class="btn-login">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" />
-        Entrar com GitHub
-      </button>
-    </div>
+  <body>
+    <!-- Fundo animado -->
+    <div class="background"></div>
 
-    <div id="profile-section" class="card fade-in hidden">
-      <div class="profile-header">
-        <img id="user-avatar" src="" alt="Avatar" class="avatar" />
-        <div>
-          <h2 id="user-name">Usuário</h2>
-          <p id="user-login">@login</p>
+    <!-- Container principal -->
+    <div class="container">
+      <!-- Tela de login -->
+      <section id="login-section" class="active">
+        <h1 class="title">CodeShelf</h1>
+        <p class="subtitle">Organize, explore e personalize seus repositórios</p>
+
+        <button id="login-github" class="btn-login">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" />
+          Entrar com GitHub
+        </button>
+      </section>
+
+      <!-- Tela de perfil -->
+      <section id="profile-section" class="hidden">
+        <div class="profile-header">
+          <img id="avatar" class="avatar" src="" alt="Avatar" />
+          <div>
+            <h2 id="username">@usuário</h2>
+            <p id="name">Nome do Usuário</p>
+          </div>
+          <button id="logout" class="btn-logout">Sair</button>
         </div>
-        <button id="logout" class="btn-logout">Sair</button>
-      </div>
 
-      <div class="search-bar">
-        <input type="text" id="repo-search" placeholder="Buscar repositório..." />
-        <button id="search-btn">Pesquisar</button>
-      </div>
+        <div class="customization">
+          <label for="profile-image">Imagem de fundo do perfil:</label>
+          <input type="file" id="profile-image" accept="image/*" />
+        </div>
 
-      <div id="repo-list" class="repo-list">
-        <p class="placeholder">Pesquise um perfil para ver os repositórios.</p>
-      </div>
+        <div class="repo-search">
+          <input type="text" id="repoSearch" placeholder="Buscar repositórios..." />
+          <button id="searchRepos">Pesquisar</button>
+        </div>
+
+        <div id="repos" class="repo-list"></div>
+      </section>
     </div>
-  </div>
 
-  <footer>
-    <p>Feito por CodeShelf</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
