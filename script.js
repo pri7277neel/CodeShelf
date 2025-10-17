@@ -78,8 +78,16 @@ async function buscarRepos() {
             headers: { Authorization: `Bearer ${token}` }
         });
         if (!res.ok) throw new Error('Token inválido ou erro ao buscar repositórios.');
-        const repos = await res.json();
-        if (!Array.isArray(repos)) throw new Error('Resposta inesperada da API.');
+        const data = await res.json();
+
+        // Garante que repos seja sempre array
+        const repos = Array.isArray(data) ? data : [];
+
+        if (repos.length === 0) {
+            errorEl.textContent = 'Nenhum repositório encontrado.';
+            errorEl.style.display = 'block';
+            return;
+        }
 
         reposContainer.style.display = 'flex';
         repos.forEach(repo => {
@@ -112,3 +120,4 @@ if (token) {
 } else {
     updateUILoggedOut();
 }
+
