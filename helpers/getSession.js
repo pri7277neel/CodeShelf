@@ -1,15 +1,16 @@
-// helpers/getSession.js
-import jwt from "jsonwebtoken";
+// /api/getSession.js
+import jwt from 'jsonwebtoken';
 
-export function getSession(req) {
-  const cookie = (req.headers.cookie || "")
-    .split(";")
-    .find((c) => c.trim().startsWith("cs_session="));
-  if (!cookie) return null;
-  const token = cookie.split("=")[1];
+export default function handler(req, res) {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
-  } catch {
-    return null;
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace('Bearer ', '');
+    if (!token) return res.status(401).json({ error: 'Token não fornecido' });
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json(payload);
+
+  } catch(err) {
+    res.status(401).json({ error: 'Token inválido ou expirado' });
   }
 }
