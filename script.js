@@ -1,125 +1,109 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const loginSection = document.getElementById("login-section");
-  const mainSection = document.getElementById("main-section");
-  const loginBtn = document.getElementById("login-github");
-  const profileContainer = document.getElementById("profile");
-  const repoContainer = document.getElementById("repos");
-  const searchBtn = document.getElementById("search-btn");
-  const searchInput = document.getElementById("username");
-  const logoutBtn = document.getElementById("logout-btn");
+// ---------------------------
+// Variáveis globais
+// ---------------------------
+const loginBtn = document.getElementById('login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const profileContainer = document.getElementById('profile');
+const reposContainer = document.getElementById('repos');
+const searchBtn = document.getElementById('search-btn');
+const usernameInput = document.getElementById('username');
 
-  const BASE_URL = window.location.origin;
+// ---------------------------
+// Função de login
+// ---------------------------
+loginBtn.addEventListener('click', () => {
+  window.location.href = '/api/auth/github';
+});
 
-  // 🔹 Função: extrai token da URL
-  function getTokenFromHash() {
-    const hash = window.location.hash;
-    if (hash && hash.startsWith("#token=")) {
-      return hash.replace("#token=", "");
-    }
-    return null;
+// ---------------------------
+// Função de logout
+// ---------------------------
+logoutBtn.addEventListener('click', async () => {
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (!res.ok) throw new Error('Não foi possível deslogar');
+    window.location.reload();
+  } catch (err) {
+    console.error('Erro ao deslogar:', err);
   }
+});
 
-  // 🔹 Função: exibe dados do perfil
-  async function carregarPerfil() {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+// ---------------------------
+// Função para carregar perfil
+// ---------------------------
+async function carregarPerfil() {
+  try {
+    const res = await fetch('/api/profile/get');
+    if (!res.ok) throw new Error('Erro ao carregar perfil');
+    const profile = await res.json();
 
-    try {
-      const res = await fetch("/api/profile/get", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    if (!profile || !profile.login) {
+      profileContainer.innerHTML = '<p>Nenhum perfil encontrado</p>';
+      return;
+    }
 
-      if (!res.ok) throw new Error("Erro ao carregar perfil");
+    profileContainer.innerHTML = `
+      <img src="${profile.avatar_url}" alt="Avatar do usuário">
+      <h2>${profile.name || profile.login}</h2>
+      <p>${profile.bio || ''}</p>
+    `;
+  } catch (err) {
+    console.error('Erro ao carregar perfil:', err);
+    profileContainer.innerHTML = `<p>Erro ao carregar perfil: ${err.message}</p>`;
+  }
+}
 
-      const data = await res.json();
+// ---------------------------
+// Função para buscar repositórios
+// ---------------------------
+async function buscarRepos(username) {
+  reposContainer.innerHTML = '';
+  if (!username) return;
 
-      profileContainer.innerHTML = `
-        <div class="user-info">
-          <img src="${data.avatar_url}" class="avatar">
-          <h2>${data.name || data.login}</h2>
-          <p>@${data.login}</p>
-        </div>
+  try {
+    const res = await fetch(`/api/getRepos?username=${username}`);
+    if (!res.ok) throw new Error('Não foi possível carregar repositórios.');
+
+    const repos = await res.json();
+
+    if (!Array.isArray(repos) || repos.length === 0) {
+      reposContainer.innerHTML = '<p>Nenhum repositório encontrado ou token inválido.</p>';
+      return;
+    }
+
+    repos.forEach(repo => {
+      const card = document.createElement('div');
+      card.classList.add('repo-card');
+      card.innerHTML = `
+        <h3>${repo.name}</h3>
+        <p>${repo.description || 'Sem descrição'}</p>
+        <a href="${repo.html_url}" target="_blank">Ver no GitHub</a>
       `;
-
-      loginSection.style.display = "none";
-      mainSection.style.display = "block";
-    } catch (err) {
-      console.error("Erro ao carregar perfil:", err);
-      localStorage.removeItem("token");
-      loginSection.style.display = "block";
-      mainSection.style.display = "none";
-    }
-  }
-
-  // 🔹 Função: busca repositórios
-  async function buscarRepos(username) {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      const res = await fetch(`/api/getRepos?username=${username}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Erro ao buscar repositórios");
-
-      const repos = await res.json();
-
-      if (!repos || repos.length === 0) {
-        repoContainer.innerHTML = `<p>Nenhum repositório encontrado.</p>`;
-        return;
-      }
-
-      repoContainer.innerHTML = repos
-        .map(
-          (repo) => `
-        <div class="repo-card">
-          <h3>${repo.name}</h3>
-          <p>${repo.description || "Sem descrição"}</p>
-          <a href="${repo.html_url}" target="_blank">Ver no GitHub</a>
-        </div>
-      `
-        )
-        .join("");
-    } catch (err) {
-      console.error(err);
-      repoContainer.innerHTML = `<p>Erro ao carregar repositórios.</p>`;
-    }
-  }
-
-  // 🔹 Clique: login com GitHub
-  if (loginBtn) {
-    loginBtn.addEventListener("click", () => {
-      window.location.href = "/api/auth/github";
+      reposContainer.appendChild(card);
     });
-  }
 
-  // 🔹 Clique: buscar repositórios
-  if (searchBtn) {
-    searchBtn.addEventListener("click", () => {
-      const username = searchInput.value.trim();
-      if (username) buscarRepos(username);
-    });
+  } catch (err) {
+    console.error('Erro ao carregar repositórios:', err);
+    reposContainer.innerHTML = `<p>Erro ao carregar repositórios: ${err.message}</p>`;
   }
+}
 
-  // 🔹 Clique: logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.href = "/";
-    });
-  }
+// ---------------------------
+// Evento do botão de busca
+// ---------------------------
+searchBtn.addEventListener('click', () => {
+  const username = usernameInput.value.trim();
+  buscarRepos(username);
+});
 
-  // 🔹 Início: checa token na URL ou localStorage
-  const tokenFromUrl = getTokenFromHash();
-  if (tokenFromUrl) {
-    localStorage.setItem("token", tokenFromUrl);
-    window.location.hash = "";
-    await carregarPerfil();
-  } else if (localStorage.getItem("token")) {
-    await carregarPerfil();
-  } else {
-    loginSection.style.display = "block";
-    mainSection.style.display = "none";
+// ---------------------------
+// Inicialização
+// ---------------------------
+window.addEventListener('DOMContentLoaded', () => {
+  carregarPerfil();
+
+  // Se houver token no hash da URL, limpa para não confundir
+  if (window.location.hash.includes('#token=')) {
+    window.history.replaceState(null, null, window.location.pathname);
   }
 });
