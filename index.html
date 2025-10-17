@@ -1,43 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeShelf</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeShelf</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Login -->
-    <section id="login-section" class="login-section">
-      <h1>CodeShelf</h1>
-      <p>Organize e explore seus repositórios do GitHub</p>
-      <button id="login-github" class="btn-login">
-        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub">
-        Entrar com GitHub
-      </button>
-    </section>
 
-    <!-- Área principal -->
-    <section id="main-section" class="main-section" style="display:none;">
-      <header class="header">
-        <div id="profile" class="profile"></div>
-        <button id="logout-btn" class="btn-logout">Sair</button>
-      </header>
+    <!-- Botão de login/logout -->
+    <div id="auth-container">
+        <button id="login-btn">Entrar com GitHub</button>
+        <button id="logout-btn" style="display:none;">Sair</button>
+    </div>
 
-      <div class="search-bar">
-        <input type="text" id="username" placeholder="Digite um usuário do GitHub">
-        <button id="search-btn">Buscar</button>
-      </div>
+    <!-- Perfil do usuário -->
+    <div id="profile" style="display:none;">
+        <img id="avatar" src="" alt="Avatar do usuário">
+        <h2 id="name"></h2>
+        <p id="bio"></p>
+    </div>
 
-      <div id="repos" class="repos"></div>
-    </section>
-  </div>
+    <!-- Pesquisa de repositórios -->
+    <div id="search-container" style="display:none;">
+        <input type="text" id="username" placeholder="Digite o nome do usuário">
+        <button id="search-btn">Pesquisar</button>
+    </div>
 
-  <footer>
-    <p>Feito por <a href="https://github.com/TheRenanOfc" target="_blank">TheRenanOfc</a></p>
-  </footer>
+    <!-- Container de repositórios -->
+    <div id="repos" style="display:none;"></div>
 
-  <script src="script.js"></script>
+    <!-- Mensagem de erro -->
+    <p id="error" style="display:none;"></p>
+
+    <script src="script.js"></script>
 </body>
 </html>
