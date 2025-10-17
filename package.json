@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'No build step needed for static + serverless functions'",
-    "start": "vercel dev"
+    "build": "echo 'No build step needed for static + serverless functions'"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.0",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.1"
   },
   "engines": {
     "node": "22.x"
