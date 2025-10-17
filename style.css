@@ -131,31 +131,47 @@ header {
   box-shadow: 0 8px 15px rgba(0,0,0,0.4);
 }
 
-.card h3 {
+/* ==================== AVATAR ==================== */
+.card img.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+/* ==================== CARD HEADER ==================== */
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  font-size: 1.1rem;
 }
 
-.card .fav {
+.card-header h3 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.card-header .fav {
   cursor: pointer;
   font-size: 1.3rem;
   color: gold;
   transition: transform 0.2s;
 }
 
-.card .fav:hover {
+.card-header .fav:hover {
   transform: scale(1.2);
 }
 
-.card p {
+/* ==================== CARD BODY ==================== */
+.card-body p {
   font-size: 0.95rem;
   margin-bottom: 8px;
 }
 
-.card small {
+.card-body small {
   color: #8b949e;
 }
 
