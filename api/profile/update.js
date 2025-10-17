@@ -1,37 +1,23 @@
-// api/profile/update.js
-import { getSession } from '../../helpers/getSession.js';
-import { createClient } from '@vercel/postgres';
+// /api/update.js
+import jwt from 'jsonwebtoken';
 
-export default async function handler(req, res) {
-  const session = getSession(req);
-  if (!session) return res.status(401).json({ error: 'Não autenticado' });
-
-  const { owner, data } = req.body;
-  if (session.login !== owner)
-    return res.status(403).json({ error: 'Sem permissão para editar' });
+export default function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
 
   try {
-    const client = createClient();
-    await client.connect();
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace('Bearer ', '');
+    if (!token) return res.status(401).json({ error: 'Token não fornecido' });
 
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS profiles (
-        owner TEXT PRIMARY KEY,
-        data JSONB
-      )
-    `);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const { fullName, favorites } = req.body;
 
-    await client.query(
-      `INSERT INTO profiles (owner, data)
-       VALUES ($1, $2)
-       ON CONFLICT (owner)
-       DO UPDATE SET data = EXCLUDED.data;`,
-      [owner, data]
-    );
+    // Aqui você pode atualizar favoritos no storage (ex: banco ou JSON)
+    // Exemplo simples: apenas logar
+    console.log(`Usuário ${payload.login} atualizou favoritos do repo ${fullName}`, favorites);
 
-    await client.end();
-    res.status(200).json({ ok: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json({ success: true });
+  } catch(err) {
+    res.status(500).json({ error: 'Erro interno' });
   }
 }
