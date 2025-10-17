@@ -1,4 +1,4 @@
-/* ==================== RESET ==================== */
+/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -7,197 +7,156 @@
 }
 
 body {
-  background: linear-gradient(135deg, #0d1117, #161b22);
-  color: #e6edf3;
-  transition: all 0.4s ease;
+  background: #121212;
+  color: #fff;
   overflow-x: hidden;
 }
 
-/* ==================== LOGIN ==================== */
-.screen {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  animation: fadeIn 0.8s ease forwards;
-}
-
-#login-screen h1 {
-  font-size: 2.2rem;
-  margin-bottom: 20px;
-  color: #58a6ff;
-  animation: slideDown 0.8s ease forwards;
-}
-
-#loginBtn {
-  padding: 12px 25px;
-  font-size: 1rem;
-  border: none;
+button {
   cursor: pointer;
-  background: linear-gradient(90deg, #238636, #2ea043);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+/* LOGIN */
+#login-screen {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+}
+
+.login-box {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  border-radius: 12px;
+  animation: fadeIn 1s ease forwards;
+}
+
+.login-box h1 {
+  margin-bottom: 16px;
+  font-size: 2.5rem;
+}
+
+.login-box p {
+  margin-bottom: 24px;
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.btn-primary {
+  background: #6c63ff;
   color: #fff;
-  border-radius: 8px;
-  transition: transform 0.2s, box-shadow 0.3s;
-  animation: slideUp 0.8s ease forwards;
 }
 
-#loginBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+.btn-primary:hover {
+  background: #584ee0;
 }
 
-/* ==================== HEADER ==================== */
-header {
+.btn-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* APP */
+.topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 25px;
-  background: #161b22;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  background: #1f1f1f;
+  padding: 12px 24px;
 }
 
-#themeBtn {
-  padding: 5px 12px;
-  font-size: 1.2rem;
-  cursor: pointer;
+.topbar .filters input, .topbar .filters select, .topbar .right input {
+  padding: 6px 12px;
+  border-radius: 6px;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg,#238636,#2ea043);
+  background: #2c2c2c;
   color: #fff;
-  transition: all 0.3s;
+  margin-right: 8px;
 }
 
-#themeBtn:hover {
-  transform: scale(1.1);
-}
-
-/* ==================== FILTERS ==================== */
-#filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 15px 25px;
-  background: #0d1117aa;
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid #30363d;
-  animation: fadeIn 0.5s ease forwards;
-}
-
-#filters input, #filters select, #filters button {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-}
-
-#filters input, #filters select {
-  flex: 1;
-  min-width: 150px;
-}
-
-#filters button {
-  background: linear-gradient(90deg,#238636,#2ea043);
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-#filters button:hover {
-  transform: scale(1.05);
-}
-
-/* ==================== CARDS ==================== */
-#cardsContainer {
+.cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-  padding: 25px;
+  gap: 16px;
+  padding: 24px;
 }
 
+/* Card */
 .card {
-  background: linear-gradient(135deg, #161b22, #21262d);
-  padding: 15px;
+  background: #1e1e1e;
+  padding: 16px;
   border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  animation: fadeIn 0.6s ease forwards;
+  transition: transform 0.3s;
   position: relative;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+  transform: scale(1.03);
 }
 
-/* ==================== AVATAR ==================== */
-.card img.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-}
-
-/* ==================== CARD HEADER ==================== */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.card-header h3 {
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-}
-
-.card-header .fav {
-  cursor: pointer;
-  font-size: 1.3rem;
-  color: gold;
-  transition: transform 0.2s;
-}
-
-.card-header .fav:hover {
-  transform: scale(1.2);
-}
-
-/* ==================== CARD BODY ==================== */
-.card-body p {
-  font-size: 0.95rem;
+.card img {
+  max-width: 100%;
+  border-radius: 6px;
   margin-bottom: 8px;
 }
 
-.card-body small {
-  color: #8b949e;
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
 }
 
-/* ==================== ANIMAÇÕES ==================== */
+.card p {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  font-size: 1.4rem;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #222;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+}
+
+.modal img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+/* Animação */
 @keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(10px);}
-  100% { opacity: 1; transform: translateY(0);}
-}
-
-@keyframes slideDown {
-  0% { opacity: 0; transform: translateY(-20px);}
-  100% { opacity: 1; transform: translateY(0);}
-}
-
-@keyframes slideUp {
-  0% { opacity: 0; transform: translateY(20px);}
-  100% { opacity: 1; transform: translateY(0);}
-}
-
-/* ==================== RESPONSIVO ==================== */
-@media(max-width: 700px){
-  #filters {
-    flex-direction: column;
-  }
-  
-  #cardsContainer {
-    grid-template-columns: 1fr;
-  }
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
 }
