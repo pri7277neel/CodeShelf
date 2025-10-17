@@ -1,58 +1,45 @@
-// api/auth/callback.js
+// /api/callback.js
 import fetch from 'node-fetch';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
+  const code = req.query.code;
+  if (!code) return res.status(400).send('Código OAuth não fornecido');
+
   try {
-    const code = req.query.code;
-    if (!code) return res.status(400).json({ error: 'Código não fornecido' });
-
-    const client_id = process.env.GITHUB_CLIENT_ID;
-    const client_secret = process.env.GITHUB_CLIENT_SECRET;
-    const jwt_secret = process.env.JWT_SECRET;
-    const baseUrl = process.env.BASE_URL;
-
-    if (!client_id || !client_secret || !jwt_secret || !baseUrl) {
-      return res.status(500).json({ error: 'Variáveis de ambiente não configuradas' });
-    }
-
-    // Troca o code pelo access token
+    // troca code pelo access token
     const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id, client_secret, code }),
+      headers: { Accept: 'application/json' },
+      body: JSON.stringify({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code
+      })
     });
-
     const tokenData = await tokenRes.json();
-    if (!tokenData.access_token) return res.status(400).json({ error: 'Não foi possível obter access token' });
+    if (!tokenData.access_token) throw new Error('Não foi possível obter token');
 
-    const accessToken = tokenData.access_token;
-
-    // Pega info do usuário
+    // pega dados do usuário
     const userRes = await fetch('https://api.github.com/user', {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `token ${tokenData.access_token}` }
     });
     const user = await userRes.json();
 
-    // Gera JWT
-    const token = jwt.sign(
-      {
-        login: user.login,
-        id: user.id,
-        avatar_url: user.avatar_url,
-        name: user.name,
-      },
-      jwt_secret,
-      { expiresIn: '7d' }
-    );
+    // cria JWT
+    const jwtToken = jwt.sign({
+      login: user.login,
+      id: user.id,
+      avatar_url: user.avatar_url,
+      access_token: tokenData.access_token
+    }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    // Redireciona para frontend com token no hash
-    res.writeHead(302, {
-      Location: `${baseUrl}/#token=${token}`,
-    });
-    res.end();
+    // redireciona pro front com token no hash
+    const redirectUrl = `${process.env.BASE_URL}/#token=${jwtToken}`;
+    res.redirect(redirectUrl);
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    res.status(500).send('Erro no callback OAuth');
   }
 }
