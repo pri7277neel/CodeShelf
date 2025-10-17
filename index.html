@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeShelf</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeShelf</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="loginScreen" class="screen">
@@ -19,8 +19,10 @@
     <div class="app-box">
       <header>
         <h2>Seus Repositórios</h2>
-        <input type="text" id="username" placeholder="Digite o usuário do GitHub">
-        <button id="searchBtn">Buscar</button>
+        <div class="search-area">
+          <input type="text" id="username" placeholder="Digite o usuário do GitHub">
+          <button id="searchBtn">Buscar</button>
+        </div>
       </header>
       <ul id="repoList"></ul>
     </div>
