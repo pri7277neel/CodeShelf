@@ -16,36 +16,19 @@ let favorites = JSON.parse(localStorage.getItem('cs_favorites')) || [];
 let repoImages = JSON.parse(localStorage.getItem('cs_repoImages')) || {};
 let currentRepos = [];
 let activeFilters = { favoritesOnly: false, language: '', query: '' };
-let jwtToken = localStorage.getItem('cs_token') || null;
 
-// -------------------- LOGIN --------------------
-function parseTokenFromHash() {
-  const hash = window.location.hash;
-  if (hash.startsWith('#token=')) {
-    const token = hash.replace('#token=', '');
-    window.location.hash = '';
-    localStorage.setItem('cs_token', token);
-    return token;
-  }
-  return null;
-}
+// util
+function safeId(str){ return 'id_' + String(str).replace(/[^a-z0-9]/gi, '_'); }
+function escapeHtml(s){ if(!s)return ''; return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function cssEscape(str){ return str.replace(/["\\]/g,'\\$&'); }
 
-jwtToken = parseTokenFromHash() || jwtToken;
-
-if (jwtToken) {
-  loginScreen.style.display = 'none';
-  app.style.display = 'block';
-} else {
-  loginScreen.style.display = 'flex';
-  app.style.display = 'none';
-}
-
-// Botão login
+// LOGIN
 loginBtn.addEventListener('click', () => {
-  window.location.href = '/api/auth/github';
+  const base = window.location.origin;
+  window.location.href = `${base}/api/auth/github`;
 });
 
-// -------------------- THEME --------------------
+// THEME
 themeBtn.addEventListener('click', () => {
   darkMode = !darkMode;
   document.body.style.background = darkMode ? '#0d1117' : '#fafafa';
@@ -53,117 +36,132 @@ themeBtn.addEventListener('click', () => {
   themeBtn.textContent = darkMode ? '🌙' : '☀️';
 });
 
-// -------------------- FILTROS --------------------
+// FILTER UI
 favFilterBtn.addEventListener('click', () => {
   activeFilters.favoritesOnly = !activeFilters.favoritesOnly;
   favFilterBtn.classList.toggle('active', activeFilters.favoritesOnly);
-  renderRepos(currentRepos);
-});
-searchInput.addEventListener('input', () => {
-  activeFilters.query = searchInput.value.trim().toLowerCase();
-  renderRepos(currentRepos);
-});
-langSelect.addEventListener('change', () => {
-  activeFilters.language = langSelect.value;
-  renderRepos(currentRepos);
+  renderCards(currentRepos);
 });
 
-// -------------------- CARREGAR REPOS --------------------
+searchInput.addEventListener('input', e => {
+  activeFilters.query = e.target.value.toLowerCase();
+  renderCards(currentRepos);
+});
+
+langSelect.addEventListener('change', e => {
+  activeFilters.language = e.target.value;
+  renderCards(currentRepos);
+});
+
+// LOAD REPOS
 loadBtn.addEventListener('click', async () => {
   const username = usernameInput.value.trim();
-  if (!username) return alert('Digite um usuário!');
-  if (!jwtToken) return alert('Você precisa estar logado!');
-
-  cardsContainer.innerHTML = '<p>Carregando...</p>';
-
-  try {
-    const res = await fetch(`/api/getRepos?username=${username}`, {
-      headers: { Authorization: `Bearer ${jwtToken}` }
-    });
-    if (!res.ok) throw new Error('Não foi possível carregar repositórios. Token pode estar inválido.');
-    const repos = await res.json();
-    currentRepos = repos;
-    populateLangSelect(repos);
-    showUser(repos.user);
-    renderRepos(repos.list);
-  } catch (err) {
-    console.error(err);
-    cardsContainer.innerHTML = `<p>Erro: ${err.message}</p>`;
-  }
+  if(!username) return alert('Informe um usuário do GitHub!');
+  await fetchRepos(username);
 });
 
-// -------------------- OUTRAS FUNÇÕES (render, showUser, filtros) --------------------
-function populateLangSelect(repos){
-  const langs = new Set();
-  repos.forEach(r => { if (r.language) langs.add(r.language); });
-  langSelect.innerHTML = '<option value="">Todas linguagens</option>';
-  Array.from(langs).sort().forEach(l => {
-    const opt = document.createElement('option');
-    opt.value = l;
-    opt.textContent = l;
-    langSelect.appendChild(opt);
-  });
-}
-
-function showUser(user){
-  userInfo.innerHTML = `
-    <img src="${user.avatar_url}" alt="avatar" />
-    <div>
-      <h3>${user.name || user.login}</h3>
-      <p>${user.bio || ''}</p>
-      <a href="${user.html_url}" target="_blank" style="color:var(--accent)">Ver no GitHub</a>
-    </div>
-  `;
-}
-
-function renderRepos(repos){
-  cardsContainer.innerHTML = '';
-  let filtered = repos.slice();
-  if (activeFilters.favoritesOnly) filtered = filtered.filter(r => favorites.includes(r.full_name));
-  if (activeFilters.language) filtered = filtered.filter(r => (r.language||'').toLowerCase() === activeFilters.language.toLowerCase());
-  if (activeFilters.query) filtered = filtered.filter(r => (r.name||'').toLowerCase().includes(activeFilters.query));
-
-  if (filtered.length === 0) {
-    cardsContainer.innerHTML = '<p style="padding:1rem;color:var(--muted)">Nenhum repositório encontrado.</p>';
-    return;
+async function fetchRepos(username){
+  try{
+    const token = window.location.hash.split('token=')[1];
+    if(!token) return alert('Você precisa logar primeiro!');
+    const res = await fetch(`/api/getRepos?username=${encodeURIComponent(username)}&token=${token}`);
+    if(!res.ok) throw new Error('Não foi possível carregar repositórios. Token pode estar inválido.');
+    const data = await res.json();
+    currentRepos = data;
+    populateLangSelect(data);
+    renderCards(data);
+  }catch(e){
+    alert(e.message);
+    console.error(e);
   }
+}
 
-  filtered.forEach(repo => {
-    const card = document.createElement('div');
-    card.className = 'repo-card';
-    card.dataset.fullname = repo.full_name;
+function populateLangSelect(repos){
+  const langs = [...new Set(repos.map(r=>r.language).filter(Boolean))];
+  langSelect.innerHTML = `<option value="">Todas linguagens</option>`;
+  langs.forEach(l=>langSelect.insertAdjacentHTML('beforeend',`<option value="${l}">${l}</option>`));
+}
 
-    const imgSrc = repoImages[repo.full_name] || 'https://via.placeholder.com/400x220?text=Sem+imagem';
-    card.innerHTML = `
-      <img class="repo-img" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(repo.name)}" />
-      <div class="repo-name">${escapeHtml(repo.name)}</div>
-      <button class="fav-btn">${favorites.includes(repo.full_name) ? '★' : '☆'}</button>
-      <div class="repo-meta">
-        <span class="meta-lang">${escapeHtml(repo.language || 'N/A')}</span>
-        <span class="meta-stars">★ ${repo.stargazers_count}</span>
+// CARDS
+function renderCards(repos){
+  cardsContainer.innerHTML='';
+  repos.forEach(r=>{
+    if(activeFilters.favoritesOnly && !favorites.includes(r.full_name)) return;
+    if(activeFilters.language && r.language!==activeFilters.language) return;
+    if(activeFilters.query && !r.name.toLowerCase().includes(activeFilters.query)) return;
+
+    const fav = favorites.includes(r.full_name) ? '★' : '☆';
+    const html = `
+      <div class="repo-card" data-fullname="${r.full_name}">
+        <img src="${r.image||'https://via.placeholder.com/300x140?text=Repo'}" />
+        <button class="fav-btn">${fav}</button>
+        <div class="repo-name">${escapeHtml(r.name)}</div>
+        <div class="repo-meta">
+          <span>${r.language||'--'}</span>
+          <span>★ ${r.stargazers_count}</span>
+        </div>
       </div>
     `;
+    const el = document.createElement('div');
+    el.innerHTML = html;
+    const card = el.firstElementChild;
 
-    const favBtn = card.querySelector('.fav-btn');
-    favBtn.addEventListener('click', e => {
+    // FAVORITE
+    card.querySelector('.fav-btn').addEventListener('click', e=>{
       e.stopPropagation();
-      toggleFavorite(repo.full_name);
-      favBtn.textContent = favorites.includes(repo.full_name) ? '★' : '☆';
-      renderRepos(currentRepos);
+      toggleFavorite(r.full_name, e.target);
     });
 
-    card.addEventListener('click', () => openModalForRepo(repo));
+    // MODAL (imagem)
+    card.addEventListener('click', ()=>{
+      showModal(r);
+    });
+
     cardsContainer.appendChild(card);
   });
 }
 
-function toggleFavorite(fullName){
-  if (favorites.includes(fullName)) favorites = favorites.filter(f => f !== fullName);
-  else favorites.push(fullName);
+// FAVORITE
+function toggleFavorite(fullName, btn){
+  const idx = favorites.indexOf(fullName);
+  if(idx>-1){favorites.splice(idx,1); btn.textContent='☆';}
+  else{favorites.push(fullName); btn.textContent='★';}
   localStorage.setItem('cs_favorites', JSON.stringify(favorites));
 }
 
-function escapeHtml(s){
-  if (!s) return '';
-  return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+// MODAL
+function showModal(repo){
+  const modal = document.createElement('div');
+  modal.className='repo-modal';
+  modal.innerHTML=`
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>${escapeHtml(repo.name)}</h2>
+        <button class="btn-ghost close-btn">✖</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-left">
+          <p>${escapeHtml(repo.description||'Sem descrição')}</p>
+          <p><a href="${repo.html_url}" target="_blank">Abrir no GitHub</a></p>
+        </div>
+        <div class="modal-right">
+          <img class="preview-img" src="${repo.image||'https://via.placeholder.com/320x220?text=Repo'}" />
+        </div>
+      </div>
+    </div>
+  `;
+  modal.querySelector('.close-btn').addEventListener('click',()=>modal.remove());
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  document.body.appendChild(modal);
 }
+
+// INICIALIZA
+document.addEventListener('DOMContentLoaded',()=>{
+  const token = window.location.hash.split('token=')[1];
+  if(token){
+    loginScreen.style.display='none';
+    app.style.display='block';
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    userInfo.innerHTML=`<img src="${payload.avatar_url}" /><div><h3>${payload.login}</h3><p>${payload.name||''}</p></div>`;
+  }
+});
