@@ -1,38 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeShelf</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeShelf</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="loginScreen">
+    <h1>Bem-vindo ao CodeShelf</h1>
+    <button id="loginBtn">Entrar com GitHub</button>
+  </div>
 
-    <!-- Botão de login/logout -->
-    <div id="auth-container">
-        <button id="login-btn">Entrar com GitHub</button>
-        <button id="logout-btn" style="display:none;">Sair</button>
-    </div>
+  <div id="appScreen" style="display:none;">
+    <h2>Pesquisar Repositórios</h2>
+    <input type="text" id="username" placeholder="Nome do usuário GitHub">
+    <button id="searchBtn">Buscar</button>
 
-    <!-- Perfil do usuário -->
-    <div id="profile" style="display:none;">
-        <img id="avatar" src="" alt="Avatar do usuário">
-        <h2 id="name"></h2>
-        <p id="bio"></p>
-    </div>
+    <ul id="repoList"></ul>
+  </div>
 
-    <!-- Pesquisa de repositórios -->
-    <div id="search-container" style="display:none;">
-        <input type="text" id="username" placeholder="Digite o nome do usuário">
-        <button id="search-btn">Pesquisar</button>
-    </div>
-
-    <!-- Container de repositórios -->
-    <div id="repos" style="display:none;"></div>
-
-    <!-- Mensagem de erro -->
-    <p id="error" style="display:none;"></p>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
