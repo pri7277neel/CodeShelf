@@ -1,39 +1,53 @@
-import fetch from 'node-fetch';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import fetch from "node-fetch";
 
 export default async function handler(req, res) {
   const code = req.query.code;
-  if (!code) return res.status(400).send('Code not provided');
 
-  // troca code por access_token
-  const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: { 'Accept': 'application/json' },
-    body: new URLSearchParams({
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
-      code
-    })
-  });
-  const tokenData = await tokenRes.json();
-  const accessToken = tokenData.access_token;
+  if (!code) {
+    return res.status(400).json({ error: "Código de autenticação não fornecido" });
+  }
 
-  if (!accessToken) return res.status(400).send('No access token');
+  try {
+    const response = await fetch("https://github.com/login/oauth/access_token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code
+      })
+    });
 
-  // busca dados do usuário
-  const userRes = await fetch('https://api.github.com/user', {
-    headers: { Authorization: `Bearer ${accessToken}` }
-  });
-  const user = await userRes.json();
+    const data = await response.json();
 
-  // cria JWT
-  const jwtToken = jwt.sign({
-    login: user.login,
-    id: user.id,
-    avatar_url: user.avatar_url,
-    name: user.name
-  }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    if (!data.access_token) {
+      return res.status(400).json({ error: "Falha ao obter access_token" });
+    }
 
-  // redireciona pro front com token no hash
-  res.redirect(`${process.env.BASE_URL}/#token=${jwtToken}`);
+    // Busca dados do usuário no GitHub
+    const userRes = await fetch("https://api.github.com/user", {
+      headers: { Authorization: `Bearer ${data.access_token}` }
+    });
+    const user = await userRes.json();
+
+    // Cria token JWT
+    const token = jwt.sign(
+      {
+        login: user.login,
+        id: user.id,
+        name: user.name,
+        avatar_url: user.avatar_url
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // Redireciona com token
+    const base = process.env.BASE_URL || "http://localhost:3000";
+    return res.redirect(`${base}/#token=${token}`);
+  } catch (error) {
+    console.error("Erro no callback:", error);
+    return res.status(500).json({ error: "Erro interno na autenticação" });
+  }
 }
