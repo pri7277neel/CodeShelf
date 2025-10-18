@@ -1,0 +1,206 @@
+/* 2. style.css */
+/* Tema escuro elegante: cinza, preto, roxos sutis */
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --accent: #6a1b9a;
+  --accent-hover: #9c27b0;
+  --border: #333333;
+  --error: #f44336;
+  --success: #4caf50;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+h1, h2 {
+  text-align: center;
+  color: var(--text-primary);
+}
+
+#login-btn {
+  background-color: var(--accent);
+  color: var(--text-primary);
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: block;
+  margin: 20px auto;
+}
+
+#login-btn:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.profile img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+#logout-btn {
+  background-color: var(--error);
+  color: var(--text-primary);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  margin-left: 20px;
+}
+
+#logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+#search-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+#search-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.repos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.repo-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+.repo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.repo-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.repo-card h3 {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+}
+
+.repo-card p {
+  margin: 5px 0;
+  color: var(--text-secondary);
+}
+
+.open-btn {
+  background-color: var(--accent);
+  color: var(--text-primary);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.open-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.file-upload {
+  margin-top: 10px;
+}
+
+.file-upload input {
+  display: none;
+}
+
+.file-upload label {
+  background-color: var(--accent);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.file-upload label:hover {
+  background-color: var(--accent-hover);
+}
+
+.message {
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.error {
+  background-color: var(--error);
+}
+
+.success {
+  background-color: var(--success);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .repos-grid {
+    grid-template-columns: 1fr;
+  }
+}
