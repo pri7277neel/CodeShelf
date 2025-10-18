@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeShelf</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeShelf</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" href="./favicon.ico">
 </head>
 <body>
-  <div id="loginScreen" class="screen">
+  <!-- Tela de Login -->
+  <div id="loginScreen" class="screen active">
     <div class="login-box">
-      <h1>CodeShelf</h1>
-      <p>Entre com sua conta GitHub para acessar seus repositórios</p>
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="logo" alt="GitHub">
+      <h1>Bem-vindo ao CodeShelf</h1>
+      <p>Organize seus repositórios do GitHub com facilidade.</p>
       <button id="loginBtn">Entrar com GitHub</button>
     </div>
   </div>
 
-  <div id="appScreen" class="screen" style="display:none;">
+  <!-- Tela Principal -->
+  <div id="appScreen" class="screen">
     <div class="app-box">
       <header>
         <h2>Seus Repositórios</h2>
@@ -28,6 +32,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
