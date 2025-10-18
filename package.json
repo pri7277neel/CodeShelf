@@ -6,9 +6,8 @@
     "dev": "vercel dev"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.0",
-    "multer": "^2.0.0-alpha.8",
+    "multer": "^2.0.1",
     "node-fetch": "^3.3.0"
   },
   "engines": {
