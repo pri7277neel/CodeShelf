@@ -1,4 +1,3 @@
-// 4. /api/auth/github.js
 import { URLSearchParams } from 'url';
 
 export default async function handler(req, res) {
