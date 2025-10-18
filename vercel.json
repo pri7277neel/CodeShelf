@@ -6,22 +6,27 @@
       "use": "@vercel/node"
     },
     {
-      "src": "*.html",
+      "src": "**/*.html",
       "use": "@vercel/static"
     },
     {
-      "src": "style.css",
+      "src": "**/*.css",
       "use": "@vercel/static"
     },
     {
-      "src": "script.js",
+      "src": "**/*.js",
+      "use": "@vercel/static",
+      "config": { "split": false }
+    },
+    {
+      "src": "public/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1.js"
+      "dest": "/api/$1"
     },
     {
       "src": "/style.css",
@@ -30,6 +35,10 @@
     {
       "src": "/script.js",
       "dest": "/script.js"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
     },
     {
       "src": "/(.*)",
